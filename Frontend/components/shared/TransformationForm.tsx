@@ -95,7 +95,7 @@ const TransformationForm = ({
     // Replace the string with proper message object
     const msg = { use_credits: { credits: `${Math.abs(creditFee)}` } };
     // const msg = {ge}
-
+    
     try {
       if (signingClient) {
         await signingClient.execute(

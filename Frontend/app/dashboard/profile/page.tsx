@@ -73,7 +73,9 @@ const ProfilePage = () => {
             },
           }
         );
+
         console.log("transaction_res", transaction_res);
+
         let req_txn = transaction_res?.transactions?.map(
           (txn: { credits: string; label: string; timestamp: string }) => ({
             credits: txn?.credits,
@@ -81,7 +83,7 @@ const ProfilePage = () => {
             timestamp: Number(txn?.timestamp) * 1000,
           })
         );
-
+        
         setTransactions(req_txn);
       }
     } catch (error) {
@@ -91,8 +93,12 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Header title="Profile" />
-
+      <Header
+        title={`Greetings! ${user?.data?.first_name} ${user?.data?.last_name}`}
+      />
+      <span className="bg-orange-50 px-4 py-1 rounded-full italic font-semibold text-orange-500 text-sm">
+        {user?.walletAddress}
+      </span>
       <section className="profile relative">
         <LogOut
           className="absolute -top-20 right-5 text-red-500 cursor-pointer"

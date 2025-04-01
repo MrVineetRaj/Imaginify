@@ -9,6 +9,7 @@ import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import { useEffect, useState } from "react";
 import { useGlobalProvider } from "@/lib/globalProvider";
 import toast from "react-hot-toast";
+// import axios from "axios";
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
 

@@ -32,7 +32,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [errorUser, setErrorUser] = useState<string | null>(null);
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-
+  
   const { data: account } = useAbstraxionAccount();
   useEffect(() => {
     setLoadingUser(true);

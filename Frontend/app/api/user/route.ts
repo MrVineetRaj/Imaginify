@@ -5,13 +5,11 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const addr = new URL(req.url).searchParams.get("addr");
   try {
-    
     await connectToDatabase();
     const user = await User.findOne({
       wallet_address: addr,
     });
 
-    
     if (!user) {
       return NextResponse.json({
         success: false,
@@ -25,7 +23,6 @@ export async function GET(req: Request) {
       data: user,
     });
   } catch (error) {
-    
     return NextResponse.json({
       success: false,
       message: "Internal Server Error",
@@ -65,6 +62,49 @@ export async function POST(req: Request) {
       success: true,
       message: "User Created",
       data: user,
+    });
+  } catch (error) {
+    return NextResponse.json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
+export async function PUT(req: Request) {
+  const body = await req.json();
+  const { wallet_address, credit_balance } = body;
+  try {
+    if (!wallet_address || !credit_balance) {
+      return NextResponse.json({
+        success: false,
+        message: "Please provide all fields",
+      });
+    }
+    await connectToDatabase();
+
+    const user = await User.findOneAndUpdate(
+      {
+        wallet_address,
+      },
+      {
+        credit_balance,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!user) {
+      return NextResponse.json({
+        success: false,
+        message: "User Not Found",
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "User Updated",
+      // data: user,
     });
   } catch (error) {
     return NextResponse.json({

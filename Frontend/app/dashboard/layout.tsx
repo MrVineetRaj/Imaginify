@@ -18,8 +18,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <div className="root">
-      {user?.loading  ? (
-        <Loader className="size-24 animate-spin absolute top-[50%] left-[50%] translate-[50%]" />
+      {user?.loading ? (
+        <div className="fixed top-0 left-0 h-screen w-[100svw] flex items-center justify-center ">
+          <Loader className="size-24 animate-spin " />
+        </div>
       ) : (
         <>
           <Sidebar />

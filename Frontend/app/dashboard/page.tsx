@@ -12,7 +12,7 @@ import { useEffect, useState, Suspense } from "react";
 // Create a client component to use useSearchParams
 function HomeContent() {
   const router = useRouter();
-  const pathname = usePathname();
+  // const pathname = usePathname();
   const searchParams = useSearchParams();
   
   const page = Number(searchParams.get("page")) || 1;
