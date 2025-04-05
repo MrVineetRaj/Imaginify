@@ -133,7 +133,7 @@ const ProfilePage = () => {
         </div>
       </section>
       <hr className="my-4" />
-      <h1 className="h3-bold">Your Trnsactions</h1>
+      <h1 className="h3-bold">Your Transactions</h1>
       <Table>
         <TableHeader>
           <TableRow>
