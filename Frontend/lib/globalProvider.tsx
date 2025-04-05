@@ -12,12 +12,13 @@ export interface IGlobalContext {
     methods: {
       setWalletAddress: (address: string) => void;
       setUser: (user: IUser) => void;
-      getUser: () => void;
+      getUser: (string) => Promise<string>;
       registerUser: (formData: {
         name: string;
         wallet_address: string;
         role: string;
       }) => void;
+      loadWalletAddress: (addr: string) => Promise<void>;
     };
     error: string | null;
     isLogged: boolean;
@@ -32,45 +33,23 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   const [errorUser, setErrorUser] = useState<string | null>(null);
   const [isLogged, setIsLogged] = useState<boolean>(false);
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  
-  const { data: account } = useAbstraxionAccount();
-  useEffect(() => {
-    setLoadingUser(true);
-    if (account?.bech32Address !== walletAddress) {
-      loadWalletAddress();
-    } else {
-      if (user?.username) {
-        setIsLogged(true);
-      } else {
-        setIsLogged(false);
-      }
-      setLoadingUser(false);
-    }
-  }, [account]);
 
-  const loadWalletAddress = async () => {
-    if (account?.bech32Address?.startsWith("xion")) {
-      setWalletAddress(account?.bech32Address);
-      getUser(account?.bech32Address);
-    }
+  const loadWalletAddress = async (address) => {
+    await getUser(address);
   };
 
   const getUser = async (wallet_address = walletAddress) => {
-    setLoadingUser(true);
     try {
-      setLoadingUser(true);
+      // setLoadingUser(true);
+      setWalletAddress(wallet_address);
       const res = await axios.get(`/api/user?addr=${wallet_address}`);
-
-      
       if (res.data.success && res.data) {
-        
         setUser(res.data.data || null);
         setIsLogged(true);
-      } 
+      }
+      return res.data.message;
     } catch (error) {
-      setErrorUser("Not able to get user");
-    } finally {
-      setLoadingUser(false);
+      return "Not able to get user";
     }
   };
 
@@ -107,7 +86,6 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const storeWalletAddress = async (address: string) => {
-    
     setWalletAddress(address);
   };
 
@@ -124,6 +102,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(user);
           setIsLogged(true);
         },
+        loadWalletAddress,
       },
       error: errorUser,
       isLogged: isLogged,

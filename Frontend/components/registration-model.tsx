@@ -7,6 +7,7 @@ import { useGlobalProvider } from "@/lib/globalProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import { useRouter } from "next/navigation";
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
 const RegistrationModel = ({
@@ -15,6 +16,7 @@ const RegistrationModel = ({
   setShowRegistrationModel: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { user } = useGlobalProvider();
+  const router = useRouter();
   const { client: signingClient } = useAbstraxionSigningClient();
 
   const [formData, setFormData] = React.useState<{
@@ -38,24 +40,30 @@ const RegistrationModel = ({
   }, [user?.walletAddress]);
 
   const registerUserOnBlockChain = async () => {
-    const msg = {
-      register_user: {},
-    };
-    setLoading(true);
-
     try {
+      const msg = {
+        register_user: {},
+      };
       if (signingClient) {
-        await signingClient.execute(
+        const res = await signingClient.execute(
           user?.walletAddress!,
           contractAddress,
           msg,
           "auto"
         );
+
+        console.log("res", res);
       }
-    } catch (error) {
-      console.error("Error querying contract:", error);
-    } finally {
-      setLoading(false);
+    } catch (err: any) {
+      const message = err?.message || "";
+
+      if (message.includes("User Already Exists")) {
+        console.warn("User already exists, skipping registration.");
+        return;
+      }
+
+      console.error("Unexpected error:", err);
+      throw err;
     }
   };
 
@@ -76,6 +84,7 @@ const RegistrationModel = ({
       user?.methods?.setUser(res.data.data);
       toast.success(res.data.message);
       await registerUserOnBlockChain();
+      router.push("/dashboard");
       return;
     }
 
@@ -84,9 +93,11 @@ const RegistrationModel = ({
   };
 
   return (
-    <div className="w-[100svw] h-screen fixed top-0 left-0 bg-black/50 z-50 flex items-center justify-center">
+    <div className="w-[100svw] h-screen fixed top-0 left-0 bg-white z-50 flex items-center justify-center">
       {loading ? (
-        <Loader className="size-24 animate-spin absolute top-[50%] left-[50%] translate-[50%]" />
+        <div className="bg-white ">
+          <Loader className="size-24 animate-spin  translate-[50%]" />
+        </div>
       ) : (
         <div className="relative  bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg w-[90svw] md:w-[50svw] lg:w-[30svw]">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">

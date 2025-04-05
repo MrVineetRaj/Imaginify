@@ -8,14 +8,7 @@ import React, { useEffect } from "react";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { user } = useGlobalProvider();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!user?.isLogged) {
-      router.push("/");
-    }
-  }, [user?.isLogged]);
-
+  
   return (
     <div className="root">
       {user?.loading ? (
