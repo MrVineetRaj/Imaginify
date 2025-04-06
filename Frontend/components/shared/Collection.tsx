@@ -22,7 +22,7 @@ import { Search } from "./Search";
 export const Collection = ({
   hasSearch = false,
   images,
-  totalPages = 1,
+  // totalPages = 1,
   page,
 }: {
   images: IImage[];
@@ -65,7 +65,7 @@ export const Collection = ({
         </div>
       )}
 
-      {totalPages > 1 && (
+      {/* {totalPages > 1 && (
         <Pagination className="mt-10">
           <PaginationContent className="flex w-full">
             <Button
@@ -89,7 +89,7 @@ export const Collection = ({
             </Button>
           </PaginationContent>
         </Pagination>
-      )}
+      )} */}
     </>
   );
 };
@@ -97,7 +97,10 @@ export const Collection = ({
 const Card = ({ image }: { image: IImage }) => {
   return (
     <li>
-      <Link href={`/dashboard/transformations/${image._id}`} className="collection-card">
+      <Link
+        href={`/dashboard/transformations/${image._id}`}
+        className="collection-card shadow-[0px_0px_10px] shadow-primary/50 hover:shadow-primary hover:shadow-[0px_0px_20px]"
+      >
         <CldImage
           src={image.publicId}
           alt={image.title}
@@ -105,7 +108,7 @@ const Card = ({ image }: { image: IImage }) => {
           height={image.height}
           {...image.config}
           loading="lazy"
-          className="h-52 w-full rounded-[10px] object-cover"
+          className="h-52 w-full rounded-[10px] object-cover "
           sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw"
         />
         <div className="flex-between">

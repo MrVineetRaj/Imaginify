@@ -27,15 +27,15 @@ const Sidebar = () => {
               return (
                 <li
                   key={link.route}
-                  className={`sidebar-nav_element  group ${
-                    isActive ? "bg-primary text-white" : "text-gray-700"
+                  className={`sidebar-nav_element cursor-pointer text-white  shadow-primary/80 ${
+                    isActive
+                      ? "bg-primary shadow-[2.8px_0px_20px]"
+                      : "hover:bg-primary/50 hover:shadow-[2.8px_0px_20px]"
                   }`}
                 >
                   <Link
                     href={link.route}
-                    className={`sidebar-nav_element_link flex items-center gap-2 ${
-                      isActive ? "text-white" : "text-gray-700"
-                    }`}
+                    className={`sidebar-nav_element_link flex items-center gap-2 text-white`}
                   >
                     <span className={`sidebar-link`}>
                       <Image
@@ -43,7 +43,7 @@ const Sidebar = () => {
                         alt="icon"
                         width={20}
                         height={20}
-                        className={`${isActive && "brightness-200"}`}
+                        className={`brightness-200`}
                       />
                       {link.label}
                     </span>
@@ -59,15 +59,15 @@ const Sidebar = () => {
               return (
                 <li
                   key={link.route}
-                  className={`sidebar-nav_element  group ${
-                    isActive ? "bg-primary text-white" : "text-gray-700"
+                  className={`sidebar-nav_element  shadow-primary/60 ${
+                    isActive
+                      ? "bg-primary shadow-[2.8px_0px_20px]"
+                      : "hover:bg-primary/50 hover:shadow-[2.8px_0px_20px]"
                   }`}
                 >
                   <Link
                     href={link.route}
-                    className={`sidebar-nav_element_link flex items-center gap-2 ${
-                      isActive ? "text-white" : "text-gray-700"
-                    }`}
+                    className={`sidebar-nav_element_link flex items-center gap-2 text-white`}
                   >
                     <span className={`sidebar-link`}>
                       <Image
@@ -75,7 +75,7 @@ const Sidebar = () => {
                         alt="icon"
                         width={20}
                         height={20}
-                        className={`${isActive && "brightness-200"}`}
+                        className={"brightness-200"}
                       />
                       {link.label}
                     </span>

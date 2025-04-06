@@ -20,7 +20,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-:root {
+/* :root {
   --radius: 0.5rem;
   --background: hsl(0 0% 100%);
   --foreground: hsl(222.2 84% 4.9%);
@@ -54,9 +54,11 @@
   --sidebar-accent-foreground: hsl(222.2 47.4% 11.2%);
   --sidebar-border: hsl(214.3 31.8% 91.4%);
   --sidebar-ring: hsl(221.2 83.2% 53.3%);
-}
+} */
 
-.dark {
+/* .dark { */
+:root {
+  --radius: 0.5rem;
   --background: hsl(222.2 84% 4.9%);
   --foreground: hsl(210 40% 98%);
   --card: hsl(222.2 84% 4.9%);
@@ -251,7 +253,7 @@ button {
 
   /* Sidebar Component */
   .sidebar {
-    @apply hidden h-screen w-72 bg-white p-5 shadow-md shadow-purple-200/50 lg:flex;
+    @apply hidden h-screen w-72 bg-gray-900 p-5 shadow-md shadow-purple-200/50 lg:flex;
   }
 
   .sidebar-logo {
@@ -362,7 +364,7 @@ button {
   }
 
   .collection-card {
-    @apply flex flex-1 cursor-pointer flex-col gap-5 rounded-[16px] border-2 border-purple-200/15 bg-white p-4 shadow-xl shadow-purple-200/10 transition-all hover:shadow-purple-200/20;
+    @apply flex flex-1 cursor-pointer flex-col gap-5 rounded-[16px]  bg-gray-900 p-4  transition-all;
   }
 
   /* Transformation Details */
@@ -380,20 +382,20 @@ button {
   }
 
   .profile-balance {
-    @apply w-full rounded-[16px] border-2 border-purple-200/20 bg-white p-5 shadow-lg shadow-purple-200/10 md:px-6 md:py-8;
+    @apply w-full rounded-[16px]  bg-gray-900 p-5 shadow-lg shadow-purple-200/10 md:px-6 md:py-8;
   }
 
   .profile-image-manipulation {
-    @apply w-full rounded-[16px] border-2 border-purple-200/20 bg-white p-5 shadow-lg shadow-purple-200/10 md:px-6 md:py-8;
+    @apply w-full rounded-[16px]  bg-gray-900  p-5 shadow-lg shadow-purple-200/10 md:px-6 md:py-8;
   }
 
-   /* Credits Page */
+  /* Credits Page */
   .credits-list {
     @apply mt-11 grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-9 xl:grid-cols-3;
   }
 
   .credits-item {
-    @apply w-full rounded-[16px] border-2 border-purple-200/20 bg-white p-8 shadow-xl shadow-purple-200/20 lg:max-w-none;
+    @apply w-full rounded-[16px]  bg-gray-900  p-8 shadow-xl shadow-purple-200/20 lg:max-w-none;
   }
 
   .credits-btn {

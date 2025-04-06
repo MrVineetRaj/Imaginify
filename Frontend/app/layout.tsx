@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${RubikFont.variable}  antialiased`}>
+      <body className={`${RubikFont.variable}  antialiased`} suppressHydrationWarning>
         <AbstraxionProviderWrapper>
           <GlobalProvider>
             {children}

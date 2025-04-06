@@ -9,14 +9,27 @@ import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
 import { useEffect, useState } from "react";
 import { useGlobalProvider } from "@/lib/globalProvider";
 import toast from "react-hot-toast";
+import { Loader } from "lucide-react";
+
+import TransactionExplorer from "@/components/shared/TransactionExplorer";
+
 // import axios from "axios";
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
-
+const planPrice: {
+  [key: string]: number;
+} = {
+  Basic: 0.01,
+  Pro: 0.02,
+  Premium: 0.03,
+};
 const Credits = () => {
   const { user } = useGlobalProvider();
   const { client: signingClient } = useAbstraxionSigningClient();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<string>("");
+  const [buyingConfirmationModelOpen, setBuyingConfirmationModelOpen] =
+    useState<string>("");
+  const [txHash, setTxHash] = useState<string>("");
 
   useEffect(() => {
     if (signingClient) {
@@ -28,10 +41,10 @@ const Credits = () => {
     const msg = {
       buy_credits: { bundle: bundle },
     };
-    setLoading(true);
+    setLoading(bundle);
     try {
       if (signingClient) {
-        await signingClient.execute(
+        const res = await signingClient.execute(
           user?.walletAddress!,
           contractAddress,
           msg,
@@ -45,15 +58,21 @@ const Credits = () => {
           ]
         );
 
+        console.log("Transaction response:", res);
+        setTxHash(res.transactionHash);
+
         toast.success(`Successfully purchased ${bundle} bundle for Imaginify!`);
       }
     } catch (error: any) {
+      console.log("Error in transaction:", error);
       if (error.message.includes("insufficient funds")) {
         toast.error("Insufficient funds in your wallet. Please add more XION.");
       }
-      // toast.error(error.message);
+
+      // console.log("Buying credits from blockchain", msg);
     } finally {
-      setLoading(false);
+      setLoading("");
+      setBuyingConfirmationModelOpen("");
     }
   };
   return (
@@ -96,20 +115,63 @@ const Credits = () => {
                 ))}
               </ul>
               <Button
-                className="w-full h-14 text-xl disabled:opacity-50"
-                disabled={loading}
+                className="w-full h-14 text-xl text-white disabled:opacity-50 bg-primary rounded-2xl hover:shadow-[2px_0px_20px] shadow-primary/60"
                 onClick={() => {
-                  buyCreditsFromBlockChain(
-                    plan.name,
-                    `${plan?.price * 1000000}`
-                  );
+                  setBuyingConfirmationModelOpen(plan.name);
                 }}
               >
-                Buy Now
+                Buy
               </Button>
             </li>
           ))}
         </ul>
+        {!!txHash && (
+          <TransactionExplorer
+            transactionHash={txHash}
+            setShowModel={setTxHash}
+          />
+        )}
+
+        {!!buyingConfirmationModelOpen && (
+          <div className="fixed bg-secondary/50 top-0 left-0 w-screen h-screen flex items-center justify-center">
+            <div className="bg-gray-900 max-w-[400px] mx-4 p-4 rounded-lg shadow-[2px_0px_20px] shadow-primary/60 flex flex-col items-end gap-4">
+              <h1 className="text-2xl font-semibold w-full">Are you sure ?</h1>
+              <p className="text-gray-400 text-sm">
+                This action cannot be undone. <br /> This will buy{" "}
+                {buyingConfirmationModelOpen} plan from your account and amount
+                of {planPrice[buyingConfirmationModelOpen]} XION will be
+                deducted from your account
+              </p>
+              <span className="flex items-center gap-4">
+                <Button
+                  className=" h-12 text-white disabled:opacity-50 "
+                  variant="outline"
+                  onClick={() => {
+                    setBuyingConfirmationModelOpen("");
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="min-w-[120px]  h-12 text-white disabled:opacity-50 "
+                  disabled={!!loading}
+                  onClick={() => {
+                    buyCreditsFromBlockChain(
+                      buyingConfirmationModelOpen,
+                      `${planPrice[buyingConfirmationModelOpen]*1000000}`
+                    );
+                  }}
+                >
+                  {buyingConfirmationModelOpen === loading ? (
+                    <Loader className="animate-spin" />
+                  ) : (
+                    "Continue"
+                  )}
+                </Button>
+              </span>
+            </div>
+          </div>
+        )}
       </section>
     </>
   );

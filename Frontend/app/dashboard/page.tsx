@@ -12,9 +12,8 @@ import { useEffect, useState, Suspense } from "react";
 // Create a client component to use useSearchParams
 function HomeContent() {
   const router = useRouter();
-  // const pathname = usePathname();
   const searchParams = useSearchParams();
-  
+
   const page = Number(searchParams.get("page")) || 1;
   const searchQuery = searchParams.get("query") || "";
 
@@ -45,20 +44,20 @@ function HomeContent() {
   // Handle search submission
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const newUrl = formUrlQuery({
       searchParams: searchParams.toString(),
-      key: 'query',
-      value: searchText
+      key: "query",
+      value: searchText,
     });
-    
+
     router.push(newUrl, { scroll: false });
   };
 
   return (
     <>
       <section className="home">
-        <h1 className="home-heading">
+        <h1 className="home-heading shadow-lg rounded-lg">
           Unleash Your Creative Vision with Imaginify
         </h1>
         <ul className="flex-center w-full gap-20">
@@ -66,7 +65,7 @@ function HomeContent() {
             <Link
               key={link.route}
               href={link.route}
-              className="flex-center flex-col gap-2"
+              className="flex-center flex-col gap-2 border-2 border-transparent p-2 rounded-md hover:border-white/30 hover:scale-105 hover:shadow-lg transition-transform duration-200"
             >
               <li className="flex-center w-fit rounded-full bg-white p-4">
                 <Image src={link.icon} alt="image" width={24} height={24} />
@@ -80,14 +79,16 @@ function HomeContent() {
       {/* Search Form */}
       <section className="mt-6">
         <form onSubmit={handleSearch} className="flex gap-2 max-w-lg mx-auto">
-          <input 
+          <input
             type="text"
             placeholder="Search images..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
             className="input-field flex-1"
           />
-          <button type="submit" className="btn">Search</button>
+          <button type="submit" className="button bg-gray-90 border 0">
+            Search
+          </button>
         </form>
       </section>
 
@@ -95,11 +96,7 @@ function HomeContent() {
         {loading ? (
           <div className="flex-center">Loading images...</div>
         ) : (
-          <Collection
-            images={images}
-            totalPages={totalPages}
-            page={page}
-          />
+          <Collection images={images} totalPages={totalPages} page={page} />
         )}
       </section>
     </>
@@ -118,7 +115,7 @@ function HomeContent() {
 // }) => {
 //   const params = new URLSearchParams(searchParams);
 //   params.set(key, value);
-//   
+//
 //   return `${pathname}?${params.toString()}`;
 // };
 

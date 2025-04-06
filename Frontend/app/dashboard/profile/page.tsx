@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
 
@@ -27,6 +28,7 @@ const ProfilePage = () => {
   const { user } = useGlobalProvider();
   const { data: account } = useAbstraxionAccount();
   const { logout } = useAbstraxionSigningClient();
+  const router = useRouter();
   const { client: queryClient } = useAbstraxionClient();
   const [images, setImages] = React.useState<IImage[] | null>(null);
   const [creditBalance, setCreditBalance] = React.useState<number>(0);
@@ -83,7 +85,7 @@ const ProfilePage = () => {
             timestamp: Number(txn?.timestamp) * 1000,
           })
         );
-        
+
         setTransactions(req_txn);
       }
     } catch (error) {
@@ -102,7 +104,10 @@ const ProfilePage = () => {
       <section className="profile relative">
         <LogOut
           className="absolute -top-20 right-5 text-red-500 cursor-pointer"
-          onClick={logout}
+          onClick={() => {
+            logout();
+            router.push("/");
+          }}
         />
         <div className="profile-balance">
           <p className="p-14-medium md:p-16-medium">CREDITS AVAILABLE</p>
@@ -160,7 +165,17 @@ const ProfilePage = () => {
                   {formattedDate} {formattedTime}
                 </TableCell>
                 <TableCell>{txn.credits} credits</TableCell>
-                <TableCell>{txn.label}</TableCell>
+                <TableCell>
+                  <span
+                    className={`px-4 py-1 rounded-full text-xm font-semibold ${
+                      txn.label?.toLowerCase() === "used"
+                        ? "bg-red-50 text-red-600"
+                        : "bg-green-50 text-green-600"
+                    }`}
+                  >
+                    {txn.label?.toLowerCase()}
+                  </span>
+                </TableCell>
               </TableRow>
             );
           })}
