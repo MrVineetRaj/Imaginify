@@ -76,7 +76,6 @@ export const Collection = ({
 
         imageDataPromises
           .then((data) => {
-            "Image Data", data;
             setImages(data);
           })
           .catch((error) => {
