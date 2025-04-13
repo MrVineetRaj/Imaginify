@@ -25,9 +25,7 @@ import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import { Button } from "../ui/button";
 import MediaUploader from "./MediaUploader";
 import TransformedImage from "./TransformedImage";
-import { updateCredits } from "@/lib/actions/user.actions";
 import { getCldImageUrl } from "next-cloudinary";
-import { addImage } from "@/lib/actions/image.actions";
 import {
   useAbstraxionAccount,
   useAbstraxionSigningClient,

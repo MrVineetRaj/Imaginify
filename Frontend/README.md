@@ -20,8 +20,6 @@ npm run dev
 
 > Before Running The project make sure you have below vales in .env.local
 ```bash
-MONGODB_URL=""
-
 # Cloudinary 
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
 CLOUDINARY_API_KEY=""

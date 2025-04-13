@@ -3,17 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { CldImage } from "next-cloudinary";
 
-import { transformationTypes } from "@/constants";
-import { IImage } from "@/lib/database/models/image.model";
 
 import { useEffect, useState } from "react";
 import { IImageData, useGlobalProvider } from "@/lib/globalProvider";
 import { getAllImages } from "@/lib/actions/image.actions";
 
 export const Collection = ({
-  hasSearch = false,
+  // hasSearch = false,
   // images,
   pageType = "home",
 }: {

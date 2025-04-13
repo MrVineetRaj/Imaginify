@@ -2,14 +2,11 @@
 import { Collection } from "@/components/images-container";
 // import { Collection } from "@/components/shared/Collection";
 import { navLinks } from "@/constants";
-import { getAllImages } from "@/lib/actions/image.actions";
-import { IImage } from "@/lib/database/models/image.model";
-import { useGlobalProvider } from "@/lib/globalProvider";
 import { formUrlQuery } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useEffect, useState, Suspense } from "react";
+import {  useState, Suspense } from "react";
 
 // Create a client component to use useSearchParams
 function HomeContent() {
