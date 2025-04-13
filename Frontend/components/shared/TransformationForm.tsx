@@ -135,7 +135,7 @@ const TransformationForm = ({
       if (action === "Add") {
         try {
           const res = await createImage(imageData);
-          router.push(`/images/${image?.publicId}`);
+          router.push(`/transformations/${image?.publicId}`);
         } catch (error) {
           console.log(error);
         }
