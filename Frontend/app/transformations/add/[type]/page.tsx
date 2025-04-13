@@ -13,7 +13,7 @@ const AddTransformationPage = () => {
   const router = useRouter();
   const [transformation, setTransformation] = useState<any>();
   useEffect(() => {
-    if (isRegistered) router.push("/");
+    if (isRegistered !== 1) router.push("/");
     if (type) {
       const transformation = transformationTypes[type as string];
       if (transformation) {
