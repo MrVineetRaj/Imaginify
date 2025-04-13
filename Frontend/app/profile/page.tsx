@@ -20,12 +20,12 @@ import { Collection } from "@/components/images-container";
 // const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
 
 const ProfilePage = () => {
-  const { getProfile, isRegistered } = useGlobalProvider();
+  const { getProfile, isRegistered, getUserImages } = useGlobalProvider();
   const { data: account } = useAbstraxionAccount();
   const { logout } = useAbstraxionSigningClient();
   const router = useRouter();
   const { client: queryClient } = useAbstraxionClient();
-  const [images, setImages] = React.useState<IImage[] | null>(null);
+  const [images, setImages] = React.useState<number>(null);
   const [creditBalance, setCreditBalance] = React.useState<number>(0);
 
   useEffect(() => {
@@ -35,6 +35,10 @@ const ProfilePage = () => {
     getProfile().then((res) => {
       // console.log("Profile", res);
       setCreditBalance(Number(res?.credit_balance));
+    });
+    getUserImages().then((res) => {
+      if (!res) return;
+      setImages(res?.length);
     });
   }, [account?.bech32Address, queryClient]);
 
@@ -76,7 +80,7 @@ const ProfilePage = () => {
               height={50}
               className="size-9 md:size-12"
             />
-            <h2 className="h2-bold text-dark-600">{images?.length}</h2>
+            <h2 className="h2-bold text-dark-600">{images}</h2>
           </div>
         </div>
       </section>
