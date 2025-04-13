@@ -5,8 +5,7 @@ AI-Powered Image Editing Tool
 ## Tech Stack
 
 1. Next.js
-2. MongoDB
-3. Xion
+2. Xion
 
 ## Programming Languages
 
@@ -32,12 +31,10 @@ Designed an AI-powered SaaS platform for image editing that leverages Abstractio
 
 ## Approach
 
-For this project, I followed a dynamic/hybrid approach:
-
-- Used Blockchain for transaction details
-- All transactions are performed on the blockchain
-- Used Cloudinary for image storage
-- Used MongoDB for image metadata
+- All the images are on cloudinary
+- there metadata is on blockchain
+- Reactions are on blockchain
+- Comments are on blockchain
 
 > For running the code, you can check out detailed steps in their respective README.md files.
 

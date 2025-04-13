@@ -1,72 +1,143 @@
 use cosmwasm_schema::cw_serde;
-use cosmwasm_std::Addr;use crate::state::{User, Config, Transaction};
+use cosmwasm_std::Addr;use crate::state::{Config, ImageComment, ImageData, Transaction, User};
 
-/// Initial configuration message for contract instantiation
-/// Allows setting an optional admin address with special privileges
+//info : Below is the message to instantiate the contract
 #[cw_serde]
 pub struct InstantiateMsg {
     pub admin: Option<String>,  
 }
 
-/// Message for registering new users in the platform
-/// Currently takes no parameters as registration is based on sender address
+//info : Message for registering a new user on the platform
 #[cw_serde]
 pub struct RegisterUserMessage {}
 
-/// Message for purchasing credit bundles of different types
-/// The bundle parameter identifies which credit package to purchase
+//info : Message for purchasing credits
 #[cw_serde]
 pub struct BuyCreditsMessage {
     pub bundle: String,
 }
 
-/// Message for spending credits on platform services
-/// Specifies the number of credits to consume
+//info : Message for using credits
 #[cw_serde]
 pub struct UseCreditsMessage {
     pub credits: u128,
 }
 
-/// Detailed transaction information for recording credit operations
-/// Includes metadata about the transaction type, timing, and amounts
+//info : Message for creating image
 #[cw_serde]
-pub struct TransactionMessage {
-    pub credits: u128,
-    pub label: String,
-    pub timestamp: u128,
-    pub amount_used: u128,
+pub struct CreateImageMessage {
+    pub image_id: String,
+    pub author: Addr,
+    pub original_image_url: String,
+    pub edited_image_url: String,
+    pub title: String,
+    pub prompt: String,
 }
 
-/// Contract executable messages that trigger state changes
+//info : Message for liking an image
+#[cw_serde]
+pub struct LikeImageMessage {
+    pub image_id: String,
+}
+
+//info : Message for disliking an image
+#[cw_serde]
+pub struct DislikeImageMessage {
+    pub image_id: String,
+}
+
+//info : Message for creating a comment on an image
+#[cw_serde]
+pub struct CreateCommentMessage {
+    pub comment_id: String,
+    pub image_id: String,
+    pub author: Addr,
+    pub comment: String,
+    pub timestamp: String,
+}
+
+
+
+
+//info : Contract executable messages that trigger state changes
 #[cw_serde]
 pub enum ExecuteMsg {
     RegisterUser(RegisterUserMessage),
     BuyCredits(BuyCreditsMessage),
     UseCredits(UseCreditsMessage),
+    CreateImage(CreateImageMessage),
+    LikeImage(LikeImageMessage),
+    DislikeImage(DislikeImageMessage),
+    CreateComment(CreateCommentMessage),
+    WithdrawMoney {},
 }
 
-/// Query messages for reading contract state without modifications
+// Info : Query messages for reading contract state without modifications
 #[cw_serde]
 pub enum QueryMsg {
     GetConfig {},
     GetUser { address: Addr },
     GetTransactions { address: Addr },
+    GetImages {}, 
+    GetImage { image_id: String },
+    GetUserImages { address: Addr },
+    GetImageComments { image_id: String }, // must be image_id instead of comment_id
+    GetLikedImages { address: Addr },
+    GetComment { comment_id: String },
 }
 
-/// Response wrapper for contract configuration information
+//info : Response wrapper for contract configuration information
 #[cw_serde]
 pub struct ConfigResponse {
     pub config: Config,
 }
 
-/// Response wrapper for user account information
+//info : Response wrapper for user account information
 #[cw_serde]
 pub struct UserResponse {
-    pub  user:User
+    pub user: User,
+    pub is_registered: bool,
 }
 
-/// Response wrapper for transaction history lookup
+//info : Response wrapper for transaction history lookup
 #[cw_serde]
 pub struct TransactionsResponse {
     pub transactions: Vec<Transaction>,
+}
+
+//info : Response wrapper for all images lookup
+#[cw_serde]
+pub struct ImagesResponse {
+    pub images: Vec<String>,
+}
+
+//info : Response wrapper for image data lookup
+#[cw_serde]
+pub struct ImageResponse {
+    pub image: ImageData,
+}
+
+//info : Response wrapper for user images lookup
+#[cw_serde]
+pub struct UserImagesResponse {
+    pub images: Vec<String>,
+}
+
+//info : Response wrapper for image comments lookup
+#[cw_serde]
+pub struct ImageCommentsResponse {
+    pub comments: Vec<String>,
+}
+
+//info : Response wrapper for liked images lookup
+#[cw_serde]
+pub struct LikedImagesResponse {
+    pub liked_images: Vec<String>,
+}
+
+
+//info : Response wrapper for comment data lookup
+#[cw_serde] 
+pub struct CommentResponse {
+    pub comment: ImageComment,
 }

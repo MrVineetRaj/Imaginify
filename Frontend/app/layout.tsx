@@ -4,6 +4,8 @@ import "./globals.css";
 import AbstraxionProviderWrapper from "@/components/abstraxion-provider-wrapper";
 import GlobalProvider from "@/lib/globalProvider";
 import { Toaster } from "react-hot-toast";
+import MobileNav from "@/components/shared/mobile-nav";
+import Sidebar from "@/components/shared/sidebar";
 
 const RubikFont = Rubik({
   subsets: ["latin"],
@@ -23,10 +25,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${RubikFont.variable}  antialiased`} suppressHydrationWarning>
+      <body
+        className={`${RubikFont.variable}  antialiased`}
+        suppressHydrationWarning
+      >
         <AbstraxionProviderWrapper>
           <GlobalProvider>
-            {children}
+            <div className="root">
+              <Sidebar />
+              <MobileNav />
+              <div className="root-container">
+                <div className="wrapper">{children}</div>
+              </div>
+            </div>
             <Toaster />
           </GlobalProvider>
         </AbstraxionProviderWrapper>

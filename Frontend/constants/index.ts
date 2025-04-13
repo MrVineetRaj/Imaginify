@@ -1,123 +1,91 @@
 export const navLinks = [
   {
     label: "Home",
-    route: "/dashboard",
+    route: "/",
     icon: "/assets/icons/home.svg",
   },
   {
     label: "Image Restore",
-    route: "/dashboard/transformations/add/restore",
+    route: "/transformations/add/restore",
     icon: "/assets/icons/image.svg",
   },
   {
     label: "Generative Fill",
-    route: "/dashboard/transformations/add/fill",
+    route: "/transformations/add/fill",
     icon: "/assets/icons/stars.svg",
   },
   {
     label: "Object Remove",
-    route: "/dashboard/transformations/add/remove",
+    route: "/transformations/add/remove",
     icon: "/assets/icons/scan.svg",
   },
   {
     label: "Object Recolor",
-    route: "/dashboard/transformations/add/recolor",
+    route: "/transformations/add/recolor",
     icon: "/assets/icons/filter.svg",
   },
   {
     label: "Background Remove",
-    route: "/dashboard/transformations/add/removeBackground",
+    route: "/transformations/add/removeBackground",
     icon: "/assets/icons/camera.svg",
   },
   {
     label: "Profile",
-    route: "/dashboard/profile",
+    route: "/profile",
     icon: "/assets/icons/profile.svg",
   },
   {
     label: "Buy Credits",
-    route: "/dashboard/credits",
+    route: "/credits",
     icon: "/assets/icons/bag.svg",
   },
 ];
-
+// ...existing code...
 export const plans = [
   {
     _id: 1,
-    name: "Basic",
+    name: "NovaBurst",
     icon: "/assets/icons/free-plan.svg",
     price: 0.01,
     credits: 10,
-    inclusions: [
-      {
-        label: "10 Credits",
-        isIncluded: true,
-      },
-      {
-        label: "Basic Access to Services",
-        isIncluded: true,
-      },
-      {
-        label: "Priority Customer Support",
-        isIncluded: false,
-      },
-      {
-        label: "Priority Updates",
-        isIncluded: false,
-      },
-    ],
   },
   {
     _id: 2,
-    name: "Pro",
+    name: "PixelPower",
     icon: "/assets/icons/free-plan.svg",
     price: 0.02,
     credits: 25,
-    inclusions: [
-      {
-        label: "25 Credits",
-        isIncluded: true,
-      },
-      {
-        label: "Full Access to Services",
-        isIncluded: true,
-      },
-      {
-        label: "Priority Customer Support",
-        isIncluded: true,
-      },
-      {
-        label: "Priority Updates",
-        isIncluded: false,
-      },
-    ],
   },
   {
     _id: 3,
-    name: "Premium",
+    name: "DreamForge",
     icon: "/assets/icons/free-plan.svg",
     price: 0.04,
-    credits: 100,
-    inclusions: [
-      {
-        label: "100 Credits",
-        isIncluded: true,
-      },
-      {
-        label: "Full Access to Services",
-        isIncluded: true,
-      },
-      {
-        label: "Priority Customer Support",
-        isIncluded: true,
-      },
-      {
-        label: "Priority Updates",
-        isIncluded: true,
-      },
-    ],
+    credits: 60,
+  },
+  {
+    _id: 4,
+    name: "VisionVault",
+    icon: "/assets/icons/free-plan.svg",
+    price: 0.08,
+    credits: 150,
+  },
+  {
+    _id: 5,
+    name: "CreatorSphere",
+    icon: "/assets/icons/free-plan.svg",
+    price: 0.1,
+    credits: 200,
+  },
+  {
+    _id: 6,
+    name: "InfinityCanvas",
+    icon: "/assets/icons/free-plan.svg",
+    price: 0.15,
+    credits: 300,
   },
 ];
+// ...existing code...
 
 export const transformationTypes = {
   restore: {

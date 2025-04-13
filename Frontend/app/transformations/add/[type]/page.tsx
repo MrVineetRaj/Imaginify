@@ -2,15 +2,18 @@
 import Header from "@/components/shared/headers";
 import TransformationForm from "@/components/shared/TransformationForm";
 import { transformationTypes } from "@/constants";
-import { useParams } from "next/navigation";
+import { useGlobalProvider } from "@/lib/globalProvider";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-
 const AddTransformationPage = () => {
+  const { isRegistered } = useGlobalProvider();
   const searchParams = useParams();
   const type = searchParams.type || "";
+  const router = useRouter();
   const [transformation, setTransformation] = useState<any>();
   useEffect(() => {
+    if (isRegistered) router.push("/");
     if (type) {
       const transformation = transformationTypes[type as string];
       if (transformation) {

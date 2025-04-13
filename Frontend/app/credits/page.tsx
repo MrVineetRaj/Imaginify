@@ -5,11 +5,14 @@ import Image from "next/image";
 import Header from "@/components/shared/headers";
 import { Button } from "@/components/ui/button";
 import { plans } from "@/constants";
-import { useAbstraxionSigningClient } from "@burnt-labs/abstraxion";
+import {
+  useAbstraxionAccount,
+  useAbstraxionSigningClient,
+} from "@burnt-labs/abstraxion";
 import { useEffect, useState } from "react";
 import { useGlobalProvider } from "@/lib/globalProvider";
 import toast from "react-hot-toast";
-import { Loader } from "lucide-react";
+import { Coins, Loader } from "lucide-react";
 
 import TransactionExplorer from "@/components/shared/TransactionExplorer";
 
@@ -19,17 +22,24 @@ const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
 const planPrice: {
   [key: string]: number;
 } = {
-  Basic: 0.01,
-  Pro: 0.02,
-  Premium: 0.03,
+  NovaBurst: 0.01,
+  PixelPower: 0.02,
+  DreamForge: 0.04,
+  VisionVault: 0.08,
+  CreatorSphere: 0.1,
+  InfinityCanvas: 0.15,
 };
 const Credits = () => {
-  const { user } = useGlobalProvider();
+  // const { user } = useGlobalProvider();
+  // const { getProfile } = useGlobalProvider();
+  const { data: account } = useAbstraxionAccount();
   const { client: signingClient } = useAbstraxionSigningClient();
   const [loading, setLoading] = useState<string>("");
   const [buyingConfirmationModelOpen, setBuyingConfirmationModelOpen] =
     useState<string>("");
   const [txHash, setTxHash] = useState<string>("");
+  const { buyCredits } = useGlobalProvider();
+  const [transactionHash, setTransactionHash] = useState<string>("");
 
   useEffect(() => {
     if (signingClient) {
@@ -45,7 +55,7 @@ const Credits = () => {
     try {
       if (signingClient) {
         const res = await signingClient.execute(
-          user?.walletAddress!,
+          account?.bech32Address,
           contractAddress,
           msg,
           "auto",
@@ -87,40 +97,24 @@ const Credits = () => {
           {plans.map((plan) => (
             <li key={plan.name} className="credits-item">
               <div className="flex-center flex-col gap-3">
-                <Image src={plan.icon} alt="check" width={50} height={50} />
-                <p className="p-20-semibold mt-2 text-purple-500">
-                  {plan.name}
+                {/* <Image src={plan.icon} alt="check" width={50} height={50} /> */}
+                <p className="p-20-semibold text-purple-500">{plan.name}</p>
+                <Coins className="size-20 text-yellow-500" />
+
+                <p className="p-20-semibold  text-purple-500">
+                  {plan.credits} Credits
                 </p>
-                <p className="h1-semibold text-dark-600">{plan.price} XION</p>
-                <p className="p-16-regular">{plan.credits} Credits</p>
               </div>
 
               {/* Inclusions */}
-              <ul className="flex flex-col gap-5 py-9">
-                {plan.inclusions.map((inclusion) => (
-                  <li
-                    key={plan.name + inclusion.label}
-                    className="flex items-center gap-4"
-                  >
-                    <Image
-                      src={`/assets/icons/${
-                        inclusion.isIncluded ? "check.svg" : "cross.svg"
-                      }`}
-                      alt="check"
-                      width={24}
-                      height={24}
-                    />
-                    <p className="p-16-regular">{inclusion.label}</p>
-                  </li>
-                ))}
-              </ul>
+
               <Button
-                className="w-full h-14 text-xl text-white disabled:opacity-50 bg-primary rounded-2xl hover:shadow-[2px_0px_20px] shadow-primary/60"
+                className="w-full text-white disabled:opacity-50 bg-primary mt-4 hover:shadow-[2px_0px_20px] shadow-primary/60"
                 onClick={() => {
                   setBuyingConfirmationModelOpen(plan.name);
                 }}
               >
-                Buy
+                {planPrice[plan.name]} XION
               </Button>
             </li>
           ))}
@@ -156,10 +150,14 @@ const Credits = () => {
                   className="min-w-[120px]  h-12 text-white disabled:opacity-50 "
                   disabled={!!loading}
                   onClick={() => {
-                    buyCreditsFromBlockChain(
+                    setLoading(buyingConfirmationModelOpen);
+                    buyCredits(
                       buyingConfirmationModelOpen,
-                      `${planPrice[buyingConfirmationModelOpen]*1000000}`
-                    );
+                      `${planPrice[buyingConfirmationModelOpen] * 1000000}`
+                    ).then((res) => {
+                      setBuyingConfirmationModelOpen("");
+                      setTransactionHash(res);
+                    });
                   }}
                 >
                   {buyingConfirmationModelOpen === loading ? (
@@ -171,6 +169,13 @@ const Credits = () => {
               </span>
             </div>
           </div>
+        )}
+        {!!transactionHash && (
+          <TransactionExplorer
+            transactionHash={transactionHash}
+            setShowModel={setTransactionHash}
+            description={`Transaction for ${buyingConfirmationModelOpen} bundle`}
+          />
         )}
       </section>
     </>

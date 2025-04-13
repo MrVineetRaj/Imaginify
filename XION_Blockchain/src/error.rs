@@ -26,4 +26,16 @@ pub enum ContractError {
 
     #[error("Insufficient Credits")]
     InsufficientCredits {},
+
+    #[error("Image Not Found")]
+    ImageNotFound {},
+
+    #[error("Comment Not Found")]
+    CommentNotFound {},
+
+    #[error("Image Already Liked")]
+    ImageAlreadyLiked {},
+
+    #[error("Image Already Disliked")]
+    ImageAlreadyDisliked {},
 }

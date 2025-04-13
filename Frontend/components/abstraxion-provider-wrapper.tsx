@@ -14,6 +14,8 @@ const AbstraxionProviderWrapper = ({
     restUrl: "https://api.xion-testnet-2.burnt.com:443",
   };
 
+  console.log("treasuryConfig", treasuryConfig);
+
   return (
     <AbstraxionProvider config={treasuryConfig}>{children}</AbstraxionProvider>
   );

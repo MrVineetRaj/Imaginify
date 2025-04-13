@@ -4,9 +4,11 @@ import React from "react";
 const TransactionExplorer = ({
   transactionHash,
   setShowModel,
+  description = "Your transaction has been successfully completed.",
 }: {
   transactionHash: string;
   setShowModel: (val: string) => void;
+  description?: string;
 }) => {
   const blockExplorerUrl = `https://explorer.burnt.com/xion-testnet-2/tx/${transactionHash}`;
 
@@ -16,6 +18,7 @@ const TransactionExplorer = ({
         <h2 className="text-2xl font-bold text-primary text-left mt-4">
           Transaction Done
         </h2>
+        {!!description && <p>{description}</p>}
         <span>
           TxHash :{" "}
           <a

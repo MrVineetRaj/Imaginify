@@ -6,7 +6,7 @@ use cw2::set_contract_version;
 
 use crate::error::ContractError;
 use crate::msg::{BuyCreditsMessage, ConfigResponse, CreateCommentMessage, CreateImageMessage, DislikeImageMessage, ExecuteMsg, InstantiateMsg, LikeImageMessage, QueryMsg, RegisterUserMessage, TransactionsResponse, UseCreditsMessage, UserResponse};
-use crate::state::{Config, ImageComment, ImageData, Transaction, User, COMMENTS, CONFIG, DISLIKES, IMAGES, IMAGE_COMMENTS, LIKED_IMAGES, LIKES, TRANSACTIONS, USERS, USER_IMAGES};
+use crate::state::{Config, ImageComment, ImageData, Transaction, User, COMMENTS, CONFIG, IMAGES, IMAGE_COMMENTS, LIKED_IMAGES, TRANSACTIONS, USERS, USER_IMAGES};
 
 const CONTRACT_NAME: &str = "crates.io:imaginify";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -56,37 +56,6 @@ pub fn execute(
         ExecuteMsg::LikeImage(msg) => execute_like_image(deps, env, info, msg),
         ExecuteMsg::DislikeImage(msg) => execute_dislike_image(deps, env, info, msg),
         ExecuteMsg::CreateComment(msg) => execute_create_comment(deps, env, info, msg),
-        ExecuteMsg::WithdrawMoney {} => {
-            // Get the current configuration to check admin privileges
-            let config = CONFIG.load(deps.storage)?;
-            
-            // Only the admin should be able to withdraw funds
-            if info.sender != config.admin {
-                return Err(ContractError::Unauthorized {});
-            }
-            
-            // Get the current contract balance
-            let contract_balance = deps.querier.query_all_balances(&env.contract.address)?;
-            
-            if contract_balance.is_empty() {
-                return Err(ContractError::InsufficientAmount {});
-            }
-            
-            // Create a message to send all funds to the admin
-            let bank_msg = cosmwasm_std::BankMsg::Send {
-                to_address: config.admin.to_string(),
-                amount: contract_balance.clone(),
-            };
-            
-            // Create the response with the bank message and add attributes
-            let response = Response::new()
-                .add_message(bank_msg)
-                .add_attribute("action", "withdraw_money")
-                .add_attribute("recipient", config.admin.to_string())
-                .add_attribute("amount", format!("{:?}", contract_balance));
-            
-            Ok(response)
-        }
         // ExecuteMsg::LikeComment(msg) => execute_like_comment(deps, env, info, msg),
         // ExecuteMsg::DislikeComment(msg) => execute_dislike_comment(deps, env, info, msg),
     }
@@ -142,7 +111,7 @@ pub fn execute_buy_credits(
 
         let required_amount = (amount_required * 1_000_000.0) as u128;
         
-        if payment.amount.u128() != required_amount {
+        if payment.amount.u128() < required_amount {
             return Err(ContractError::InsufficientAmount {});
         }
     }
@@ -158,7 +127,7 @@ pub fn execute_buy_credits(
 
         let required_amount = (amount_required * 1_000_000.0) as u128;
         
-        if payment.amount.u128() !=  required_amount {
+        if payment.amount.u128() < required_amount {
             return Err(ContractError::InsufficientAmount {});
         }
     }
@@ -173,7 +142,7 @@ pub fn execute_buy_credits(
 
         let required_amount = (amount_required * 1_000_000.0) as u128;
         
-        if payment.amount.u128() !=  required_amount {
+        if payment.amount.u128() < required_amount {
             return Err(ContractError::InsufficientAmount {});
         }
     } else if msg.bundle == "VisionVault" {
@@ -187,7 +156,7 @@ pub fn execute_buy_credits(
 
         let required_amount = (amount_required * 1_000_000.0) as u128;
         
-        if payment.amount.u128() !=  required_amount {
+        if payment.amount.u128() < required_amount {
             return Err(ContractError::InsufficientAmount {});
         }
     }else if msg.bundle == "CreatorSphere" {
@@ -201,7 +170,7 @@ pub fn execute_buy_credits(
 
         let required_amount = (amount_required * 1_000_000.0) as u128;
         
-        if payment.amount.u128() !=  required_amount {
+        if payment.amount.u128() < required_amount {
             return Err(ContractError::InsufficientAmount {});
         }
     }else if msg.bundle == "InfinityCanvas" {
@@ -215,7 +184,7 @@ pub fn execute_buy_credits(
 
         let required_amount = (amount_required * 1_000_000.0) as u128;
         
-        if payment.amount.u128() !=  required_amount {
+        if payment.amount.u128() < required_amount {
             return Err(ContractError::InsufficientAmount {});
         }
     }
@@ -239,8 +208,6 @@ pub fn execute_buy_credits(
     updated_transactions.push(new_transaction);
 
     TRANSACTIONS.save(deps.storage, &buyer_addr, &updated_transactions)?;
-
-
 
 
     Ok(Response::new()
@@ -326,6 +293,7 @@ pub fn execute_create_image(
 }
 
 )?;
+
     Ok(Response::new()
         .add_attribute("action", "create_images")
         .add_attribute("image", image_id.to_string())
@@ -336,84 +304,38 @@ pub fn execute_create_image(
 pub fn execute_like_image(
     deps: DepsMut,
     _env: Env,
-    info: MessageInfo,
+    _info: MessageInfo,
     msg: LikeImageMessage
 ) -> Result<Response, ContractError> 
 {
     let image_id = msg.image_id.clone();
-    let user = info.sender.clone();
-    
+
     let mut image = IMAGES.load(deps.storage, image_id.clone())
         .map_err(|_| ContractError::ImageNotFound {})?;
-    // Check if user already liked this image
-    let likes = LIKES.may_load(deps.storage, image_id.clone())?.unwrap_or_default();
-    if likes.contains(&user) {
-        return Err(ContractError::ImageAlreadyLiked {});
-    }
 
-    // Check if user already disliked this image
-    let dislikes = DISLIKES.may_load(deps.storage, image_id.clone())?.unwrap_or_default();
-    if dislikes.contains(&user) {
-        return Err(ContractError::ImageAlreadyDisliked {});
-    }
     image.like_count += 1;
 
     IMAGES.save(deps.storage, image_id.clone(), &image)?;
 
-    LIKED_IMAGES.update(deps.storage, &info.sender, |liked_images| -> StdResult<Vec<String>> {
-        let mut liked_images = liked_images.unwrap_or_default();
-        liked_images.push(image_id.clone());
-        Ok(liked_images)
-    })?;
-
-    LIKES.update(deps.storage, image_id.clone(), |likes| -> StdResult<Vec<Addr>> {
-        let mut likes = likes.unwrap_or_default();
-        likes.push(info.sender.clone());
-        Ok(likes)
-    })?;
-
-    Ok(Response::new()
-        .add_attribute("action", "like_image")
-        .add_attribute("image_id", image_id.to_string()))
-
+    Ok(Response::new())
 }
 
 
 pub fn execute_dislike_image(
     deps: DepsMut,
     _env: Env,
-    info: MessageInfo,
+    _info: MessageInfo,
     msg: DislikeImageMessage
 ) -> Result<Response, ContractError> 
 {
     let image_id = msg.image_id.clone();
-    let user = info.sender.clone();
-    
 
     let mut image = IMAGES.load(deps.storage, image_id.clone())
         .map_err(|_| ContractError::ImageNotFound {})?;
 
-     // Check if user already liked this image
-    let likes = LIKES.may_load(deps.storage, image_id.clone())?.unwrap_or_default();
-    if likes.contains(&user) {
-        return Err(ContractError::ImageAlreadyLiked  {});
-    }
-
-    // Check if user already disliked this image
-    let dislikes = DISLIKES.may_load(deps.storage, image_id.clone())?.unwrap_or_default();
-    if dislikes.contains(&user) {
-        return Err(ContractError::ImageAlreadyDisliked {});
-    }
-
-
     image.dislike_count += 1;
 
     IMAGES.save(deps.storage, image_id.clone(), &image)?;
-    DISLIKES.update(deps.storage, image_id.clone(), |dislikes| -> StdResult<Vec<Addr>> {
-        let mut dislikes = dislikes.unwrap_or_default();
-        dislikes.push(info.sender.clone());
-        Ok(dislikes)
-    })?;
 
     Ok(Response::new()
         .add_attribute("action", "dislike_image")
@@ -422,24 +344,19 @@ pub fn execute_dislike_image(
 }
 
 pub fn execute_create_comment(
-    deps: DepsMut,
+     deps: DepsMut,
     _env: Env,
     _info: MessageInfo,
     msg: CreateCommentMessage
-) -> Result<Response, ContractError> 
-{
+)-> Result<Response, ContractError> 
+{   
     let comment_id = msg.comment_id.clone();
     let image_id = msg.image_id.clone();
     let author = msg.author.clone();
     let comment = msg.comment.clone();
     let timestamp = msg.timestamp.clone();
 
-    // Check if image exists to avoid orphaned comments
-    if !IMAGES.has(deps.storage, image_id.clone()) {
-        return Err(ContractError::ImageNotFound {});
-    }
-
-        let new_comment = ImageComment {
+ let new_comment = ImageComment {
         comment_id: comment_id.clone(),
         image_id: image_id.clone(),
         author: author.clone(),
@@ -447,14 +364,18 @@ pub fn execute_create_comment(
         timestamp: timestamp.clone(),
     };
 
+
+
     COMMENTS.save(deps.storage, comment_id.clone(), &new_comment)?;
 
-    // Fix the bug in IMAGE_COMMENTS - we're storing comment_id not image_id
     IMAGE_COMMENTS.update(deps.storage, image_id.clone(), |comments| -> StdResult<Vec<String>> {
+            
         let mut comments = comments.unwrap_or_default();
-        comments.push(comment_id.to_string()); // Fix: store comment_id, not image_id
+        comments.push(image_id.to_string());
         Ok(comments)
-    })?;
+    }
+
+)?;
 
     Ok(Response::new()
         .add_attribute("action", "create_comment")
@@ -462,6 +383,9 @@ pub fn execute_create_comment(
         .add_attribute("image_id", image_id.to_string())
     )
 }
+
+
+
 
 
 
@@ -496,7 +420,6 @@ pub fn query(
         QueryMsg::GetUserImages { address } => query_user_images(deps, address),
         QueryMsg::GetImageComments { image_id } => query_image_comments(deps, image_id),
         QueryMsg::GetLikedImages { address } => query_liked_images(deps, address),
-        QueryMsg::GetComment { comment_id } => query_comment(deps, comment_id),
     }
 }
 fn query_config(deps: Deps) -> StdResult<Binary> {
@@ -504,76 +427,40 @@ fn query_config(deps: Deps) -> StdResult<Binary> {
     to_json_binary(&ConfigResponse { config })
 }
 
-
-// Fix user query to handle non-existent users
 fn query_user(deps: Deps, address: Addr) -> StdResult<Binary> {
-    let user_data = match USERS.may_load(deps.storage, &address)? {
-        Some(user) => UserResponse { 
-            user, 
-            is_registered: true 
-        },
-        None => UserResponse { 
-            user: User { credit_balance: 0 }, 
-            is_registered: false 
-        },
-    };
-    to_json_binary(&user_data)
+    let user = USERS.load(deps.storage, &address)?;
+    to_json_binary(&UserResponse { user })
 }
 
 fn query_transactions(deps: Deps, address: Addr) -> StdResult<Binary> {
-    let transactions = match TRANSACTIONS.may_load(deps.storage, &address)?{
-        Some(transactions) => transactions,
-        None => Vec::new(), // Return empty list if no transactions exist
-    };
+    let transactions = TRANSACTIONS.load(deps.storage, &address)?;
     to_json_binary(&TransactionsResponse { transactions })
 }
 
 fn query_images(deps: Deps) -> StdResult<Binary> {
-    let image_ids = IMAGES.keys(
+    let images = IMAGES.keys(
         deps.storage, 
         None, 
         None, 
         cosmwasm_std::Order::Ascending
-    ).collect::<StdResult<Vec<String>>>()?;
-    
-    // Option 1: Return just the IDs
-    to_json_binary(&image_ids)
-    
-}
-
-fn query_image(deps: Deps, image_id: String) -> StdResult<Binary> {
-    let image: ImageData = IMAGES.load(deps.storage, image_id)?;
-    to_json_binary(&image)
-}
-fn query_user_images(deps: Deps, address: Addr) -> StdResult<Binary> {
-    let images: Vec<String> = match USER_IMAGES.may_load(deps.storage, &address)?{
-        Some(images) => images,
-        None => Vec::new(), // Return empty list if no images exist
-    };
+    ).collect::<StdResult<Vec<_>>>()?;
     to_json_binary(&images)
 }
 
-// Also fix the query_image_comments function
-fn query_image_comments(deps: Deps, image_id: String) -> StdResult<Binary> {
-    // Get comment IDs for the image
-    let comment_ids: Vec<String> = match IMAGE_COMMENTS.may_load(deps.storage, image_id.clone())? {
-        Some(ids) => ids,
-        None => Vec::new(), // Return empty list if no comments exist
-    };
-    
-    to_json_binary(&comment_ids)
+fn query_image(deps: Deps, image_id: String) -> StdResult<Binary> {
+    let image = IMAGES.load(deps.storage, image_id)?;
+    to_json_binary(&image)
+}
+fn query_user_images(deps: Deps, address: Addr) -> StdResult<Binary> {
+    let images = USER_IMAGES.load(deps.storage, &address)?;
+    to_json_binary(&images)
 }
 
-// Fix the liked_images query to handle non-existent entries
+fn query_image_comments(deps: Deps, comment_id: String) -> StdResult<Binary> {
+    let comments = IMAGE_COMMENTS.load(deps.storage, comment_id)?;
+    to_json_binary(&comments)
+}
 fn query_liked_images(deps: Deps, address: Addr) -> StdResult<Binary> {
-    let liked_images = match LIKED_IMAGES.may_load(deps.storage, &address)? {
-        Some(images) => images,
-        None => Vec::new(), // Return empty list if no liked images exist
-    };
+    let liked_images = LIKED_IMAGES.load(deps.storage, &address)?;
     to_json_binary(&liked_images)
-}
-
-fn query_comment(deps: Deps, comment_id: String) -> StdResult<Binary> {
-    let comment:ImageComment  = COMMENTS.load(deps.storage, comment_id)?;
-    to_json_binary(&comment)
 }

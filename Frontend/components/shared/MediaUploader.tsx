@@ -1,6 +1,7 @@
 "use client";
 
 import { dataUrl, getImageSize } from "@/lib/utils";
+import { useAbstraxionAccount } from "@burnt-labs/abstraxion";
 import { CldImage, CldUploadWidget } from "next-cloudinary";
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 import Image from "next/image";
@@ -21,6 +22,8 @@ const MediaUploader = ({
   publicId,
   type,
 }: MediaUploaderProps) => {
+  const { data: account } = useAbstraxionAccount();
+
   const onUploadSuccessHandler = (result: any) => {
     setImage((prevState: any) => ({
       ...prevState,
