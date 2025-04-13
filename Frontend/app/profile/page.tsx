@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "@/components/shared/headers";
-import { IImage } from "@/lib/database/models/image.model";
+// import { IImage } from "@/lib/database/models/image.model";
 import { useGlobalProvider } from "@/lib/globalProvider";
 import {
   useAbstraxionAccount,
