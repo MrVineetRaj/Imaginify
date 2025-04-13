@@ -68,13 +68,13 @@ const Credits = () => {
           ]
         );
 
-        console.log("Transaction response:", res);
+        // console.log("Transaction response:", res);
         setTxHash(res.transactionHash);
 
         toast.success(`Successfully purchased ${bundle} bundle for Imaginify!`);
       }
     } catch (error: any) {
-      console.log("Error in transaction:", error);
+      // console.log("Error in transaction:", error);
       if (error.message.includes("insufficient funds")) {
         toast.error("Insufficient funds in your wallet. Please add more XION.");
       }

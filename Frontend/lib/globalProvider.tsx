@@ -54,8 +54,6 @@ export interface IGlobalContext {
   likeImage: (image_id: string) => Promise<any>;
   dislikeImage: (image_id: string) => Promise<any>;
   createComment: (data: IImageComment) => Promise<any>;
-  likeComment: (comment_id: string) => Promise<any>;
-  dislikeComment: (comment_id: string) => Promise<any>;
   loadingMessages: boolean;
   isRegistered: number;
 }
@@ -90,7 +88,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
           },
         })
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           if (res.is_registered) {
             setIsRegistered(1);
             toast.success("Account Loaded", {
@@ -114,7 +112,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (signingClient) {
-      console.log("signingClient loaded");
+      // console.log("signingClient loaded");
     }
   }, [signingClient]);
 
@@ -148,7 +146,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
       ).queryContractSmart(CONTRACT_ADDRESS, {
         get_config: {},
       });
-      console.log("\n\n\nres", res, "\n\n\n");
+      // console.log("\n\n\nres", res, "\n\n\n");
       // return res;
     } catch (error) {
       toast.error("Error fetching profile");
@@ -222,7 +220,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
   //note
   async function getUserImages() {
-    console.log("getUserImages");
+    // console.log("getUserImages");
     //note
     if (!account?.bech32Address && isRegistered != 1) {
       return null;
@@ -257,7 +255,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
           image_id: image_id, //todo : after new update in your contract it will be image_id
         },
       });
-      console.log("getImageComments", res);
+      // console.log("getImageComments", res);
       const comments: string[] = res;
 
       return comments;
@@ -271,7 +269,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   async function getLikedImages() {
     try {
       const unauthClient = initUnAuthClient();
-      console.log("getLikedImages", queryClient);
+      // console.log("getLikedImages", queryClient);
       const res = await (
         await unauthClient
       ).queryContractSmart(CONTRACT_ADDRESS, {
@@ -291,7 +289,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
   async function getComment(comment_id: string) {
     try {
       const unauthClient = initUnAuthClient();
-      console.log("getLikedImages", queryClient);
+      // console.log("getLikedImages", queryClient);
       const res = await (
         await unauthClient
       ).queryContractSmart(CONTRACT_ADDRESS, {
@@ -512,7 +510,7 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
         },
       };
 
-      console.log("Message", msg);
+      // console.log("Message", msg);
       if (signingClient && account?.bech32Address) {
         const res = await signingClient.execute(
           account?.bech32Address,
@@ -526,58 +524,6 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error) {
       toast.error("Error creating comment");
       console.error("Error creating comment", error);
-    } finally {
-      setLoadingMessages(false);
-    }
-  }
-
-  async function likeComment(comment_id: string) {
-    setLoadingMessages(true);
-    try {
-      const msg = {
-        like_comment: {
-          comment_id: comment_id,
-        },
-      };
-      if (signingClient && account?.bech32Address) {
-        const res = await signingClient.execute(
-          account?.bech32Address,
-          CONTRACT_ADDRESS,
-          msg,
-          "auto"
-        );
-        toast.success("Comment liked successfully");
-        return res;
-      }
-    } catch (error) {
-      toast.error("Error liking comment");
-      console.error("Error liking comment", error);
-    } finally {
-      setLoadingMessages(false);
-    }
-  }
-
-  async function dislikeComment(comment_id: string) {
-    setLoadingMessages(true);
-    try {
-      const msg = {
-        dislike_comment: {
-          comment_id: comment_id,
-        },
-      };
-      if (signingClient && account?.bech32Address) {
-        const res = await signingClient.execute(
-          account?.bech32Address,
-          CONTRACT_ADDRESS,
-          msg,
-          "auto"
-        );
-        toast.success("Comment disliked successfully");
-        return res.transactionHash;
-      }
-    } catch (error) {
-      toast.error("Error disliking comment");
-      console.error("Error disliking comment", error);
     } finally {
       setLoadingMessages(false);
     }
@@ -598,8 +544,6 @@ const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
     likeImage,
     dislikeImage,
     createComment,
-    likeComment,
-    dislikeComment,
     loadingMessages,
     isRegistered,
     getConfig,

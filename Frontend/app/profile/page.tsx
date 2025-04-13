@@ -33,7 +33,7 @@ const ProfilePage = () => {
       router.push("/");
     }
     getProfile().then((res) => {
-      console.log("Profile", res);
+      // console.log("Profile", res);
       setCreditBalance(Number(res?.credit_balance));
     });
   }, [account?.bech32Address, queryClient]);

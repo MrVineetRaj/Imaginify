@@ -21,10 +21,10 @@ const UserTransactions = () => {
 
   const { data: account } = useAbstraxionAccount();
   const { client: queryClient } = useAbstraxionClient();
-  
+
   useEffect(() => {
     getTransactionHistory().then((res) => {
-      // console.log("Transactions", res);
+      // ("Transactions", res);
       setTransactions(res);
     });
   }, [account?.bech32Address, queryClient]);

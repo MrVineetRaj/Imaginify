@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 
-
 import { useEffect, useState } from "react";
 import { IImageData, useGlobalProvider } from "@/lib/globalProvider";
 import { getAllImages } from "@/lib/actions/image.actions";
@@ -31,7 +30,7 @@ export const Collection = ({
       const fetchImages = async () => {
         try {
           const result = await getAllImages({ searchQuery });
-          console.log(result);
+          // console.log(result);
 
           const imageDataPromises = Promise.all(
             result.data?.map((imageId) => {
@@ -40,7 +39,7 @@ export const Collection = ({
           );
 
           const data = await imageDataPromises;
-          console.log("Image Data", data);
+          // console.log("Image Data", data);
           setImages(data);
         } catch (error) {
           console.error("Error fetching images:", error);
@@ -59,7 +58,7 @@ export const Collection = ({
 
         imageDataPromises
           .then((data) => {
-            console.log("Image Data", data);
+            // console.log("Image Data", data);
             setImages(data);
           })
           .catch((error) => {
@@ -77,7 +76,7 @@ export const Collection = ({
 
         imageDataPromises
           .then((data) => {
-            console.log("Image Data", data);
+            "Image Data", data;
             setImages(data);
           })
           .catch((error) => {

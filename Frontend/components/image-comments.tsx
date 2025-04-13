@@ -46,7 +46,7 @@ const ImageComments = ({ imageId }: { imageId: string }) => {
 
         commentDataPromises
           .then((data) => {
-            console.log("Comment Data", data);
+            // console.log("Comment Data", data);
             setComments(data);
           })
           .catch((error) => {
@@ -83,7 +83,7 @@ const ImageComments = ({ imageId }: { imageId: string }) => {
       timestamp: currentDate,
     })
       .then((res) => {
-        console.log("Comment added", res);
+        // console.log("Comment added", res);
 
         toast("Comment added", {
           icon: "✅",

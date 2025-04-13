@@ -157,7 +157,7 @@ const TransformationForm = ({
       height: imageSize.height,
     }));
 
-    console.log(transformationType.config);
+    // console.log(transformationType.config);
     setNewTransformation(transformationType.config);
 
     return onChangeField(value);

@@ -31,7 +31,7 @@ const BuyCreditConfirmation = ({
       <AlertDialogTrigger
         className="w-full h-14 text-xl text-white disabled:opacity-50 bg-primary rounded-2xl hover:shadow-[2px_0px_20px] shadow-primary/60"
         onClick={() => {
-          console.log("Hello from");
+          // console.log("Hello from");
           setBuyingConfirmationModelOpen(true);
         }}
       >
